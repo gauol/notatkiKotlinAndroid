@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">reminder</string>
+    <string name="app_name">Reminder</string>
+    <string name="add">Dodaj</string>
+    <string name="title_activity_list">listActivity</string>
+    <string name="name">Nazwa</string>
+    <string name="description">Opis</string>
+    <string name="date">Data</string>
+    <string name="time">Czas</string>
 </resources>
