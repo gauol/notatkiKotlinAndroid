@@ -17,6 +17,10 @@ import android.support.design.widget.Snackbar
 
 class addActivity : AppCompatActivity() {
     val c = Calendar.getInstance()!!
+    private var mDb: NotesDatabase? = null
+    private lateinit var mDbWorkerThread: DbWorkerThread
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +31,11 @@ class addActivity : AppCompatActivity() {
         val hour = c.get(Calendar.HOUR)
         val minute = c.get(Calendar.MINUTE)
         setListeners(year, month, day, hour, minute)
+
+        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+        mDbWorkerThread.start()
+        mDb = NotesDatabase.getInstance(this)
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -50,10 +59,23 @@ class addActivity : AppCompatActivity() {
             var time = Time(c.timeInMillis)
             var  note = Note(nameEditText.text.toString(), descriptionEditText.text.toString(), date, time)
 
+            insertNoteDataInDb(note)
+
             val snackbar = Snackbar
                     .make(this.findViewById(android.R.id.content), note.print(), Snackbar.LENGTH_LONG)
 
             snackbar.show()
         }
+    }
+
+    private fun insertNoteDataInDb(note: Note) {
+        val task = Runnable { mDb?.notesDataDao()?.insert(note) }
+        mDbWorkerThread.postTask(task)
+    }
+
+    override fun onDestroy() {
+        NotesDatabase.destroyInstance()
+        mDbWorkerThread.quit()
+        super.onDestroy()
     }
 }

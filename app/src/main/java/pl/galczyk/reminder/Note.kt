@@ -8,7 +8,7 @@ import android.util.Log
 import java.sql.Date
 import java.sql.Time
 
-@Entity(tableName = "notes")
+@Entity(tableName = "note")
 class Note {
     @NonNull
     @PrimaryKey(autoGenerate = true)

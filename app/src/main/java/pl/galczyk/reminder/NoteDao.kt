@@ -1,21 +1,18 @@
 package pl.galczyk.reminder
 
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 
 @Dao
-interface UserDao {
-    @get:Query("SELECT * FROM notes")
+interface NoteDao {
+    @get:Query("SELECT * FROM note")
     val all: List<Note>
 
-    @Query("SELECT * FROM notes WHERE id IN (:userIds)")
+    @Query("SELECT * FROM note WHERE id IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): List<Note>
 
-    @Insert
-    fun insertAll(vararg notes: Note)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(note: Note)
 
     @Delete
     fun delete(note: Note)
