@@ -9,7 +9,6 @@ import android.app.TimePickerDialog
 import java.sql.Date
 import java.sql.Time
 import java.util.*
-import android.support.v4.view.accessibility.AccessibilityEventCompat.setAction
 import android.support.design.widget.Snackbar
 
 
@@ -57,24 +56,24 @@ class addActivity : AppCompatActivity() {
         addButton.setOnClickListener{
             var date = Date(c.timeInMillis)
             var time = Time(c.timeInMillis)
-            var  note = Note(nameEditText.text.toString(), descriptionEditText.text.toString(), date, time)
+            //var  note = Note(nameEditText.text.toString(), descriptionEditText.text.toString(), date, time)
+            val  note = Note(null, nameEditText.text.toString())
 
             insertNoteDataInDb(note)
 
             val snackbar = Snackbar
-                    .make(this.findViewById(android.R.id.content), note.print(), Snackbar.LENGTH_LONG)
+                    .make(this.findViewById(android.R.id.content), note.userName, Snackbar.LENGTH_LONG)
 
             snackbar.show()
         }
     }
 
     private fun insertNoteDataInDb(note: Note) {
-        val task = Runnable { mDb?.notesDataDao()?.insert(note) }
+        val task = Runnable { mDb?.noteDao()?.insert(note) }
         mDbWorkerThread.postTask(task)
     }
 
     override fun onDestroy() {
-        NotesDatabase.destroyInstance()
         mDbWorkerThread.quit()
         super.onDestroy()
     }

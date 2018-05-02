@@ -5,27 +5,26 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 
+/**
+ * The Room database that contains the Users table
+ */
 @Database(entities = arrayOf(Note::class), version = 1)
 abstract class NotesDatabase : RoomDatabase() {
 
-    abstract fun notesDataDao(): NoteDao
+    abstract fun noteDao(): NoteDao
 
     companion object {
-        private var INSTANCE: NotesDatabase? = null
 
-        fun getInstance(context: Context): NotesDatabase? {
-            if (INSTANCE == null) {
-                synchronized(NotesDatabase::class) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            NotesDatabase::class.java, "notes.db")
-                            .build()
+        @Volatile private var INSTANCE: NotesDatabase? = null
+
+        fun getInstance(context: Context): NotesDatabase =
+                INSTANCE ?: synchronized(this) {
+                    INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
                 }
-            }
-            return INSTANCE
-        }
 
-        fun destroyInstance() {
-            INSTANCE = null
-        }
+        private fun buildDatabase(context: Context) =
+                Room.databaseBuilder(context.applicationContext,
+                        NotesDatabase::class.java, "Sample.db")
+                        .build()
     }
 }
