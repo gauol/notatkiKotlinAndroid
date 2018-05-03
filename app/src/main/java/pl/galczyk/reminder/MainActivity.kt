@@ -1,7 +1,6 @@
 package pl.galczyk.reminder
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.provider.AlarmClock.EXTRA_MESSAGE
@@ -16,12 +15,24 @@ class MainActivity : AppCompatActivity()  {
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
 
+
+//    private lateinit var viewModelFactory: ViewModelFactory
+//    private lateinit var viewModel: UserViewModel
+//    private val disposable = CompositeDisposable()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         mDbWorkerThread = DbWorkerThread("dbWorkerThread")
         mDbWorkerThread.start()
         mDb = NotesDatabase.getInstance(this)
+
+//        viewModelFactory = Injection.provideViewModelFactory(this)
+//
+//        viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java)
+
         addButton.setOnClickListener({
             val intent = Intent(this, addActivity::class.java).apply {
                 putExtra(EXTRA_MESSAGE, "siemano")
@@ -33,14 +44,38 @@ class MainActivity : AppCompatActivity()  {
             getNotesFromDB()
         })
 
-            getNotesFromDB()
+           // getNotesFromDB()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        getNotesFromDB()
+        Log.d("start", "resume")
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        getNotesFromDB()
+        Log.d("start", "onstasrt")
+    }
+//
+//    private fun updateUserName() {
+//        val userName = user_name_input.text.toString()
+//        // Disable the update button until the user name update has been done
+//        update_user_button.isEnabled = false
+//        // Subscribe to updating the user name.
+//        // Enable back the button once the user name has been updated
+//        disposable.add(viewModel.updateUserName(userName)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ update_user_button.isEnabled = true },
+//                        { error -> Log.e(TAG, "Unable to update username", error) }))
+//    }
+
     private fun getNotesFromDB() {
         val task = Runnable {
-            Log.d("info", "info")
+            //Log.d("info", "info")
             val notes =
                     mDb?.noteDao()?.getAll()
             mUiHandler.post({
@@ -49,7 +84,7 @@ class MainActivity : AppCompatActivity()  {
                 } else {
                     var value =""
                     for (note in notes){
-                        value += note.userName
+                        value += note.userName + "\r\n"
                     }
                     notesTextView.text = value
                 }
@@ -74,6 +109,7 @@ class MainActivity : AppCompatActivity()  {
     }
 
     override fun onDestroy() {
+        //disposable.clear()
         mDbWorkerThread.quit()
         super.onDestroy()
     }
