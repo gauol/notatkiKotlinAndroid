@@ -1,9 +1,6 @@
 package pl.galczyk.reminder
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 /**
  * Data Access Object for the users table.
@@ -17,6 +14,9 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: Note)
 
-    @Query("DELETE FROM notes")
-    fun deleteAllUsers()
+    @Delete
+    fun deleteNote(note: Note)
+
+//    @Query("DELETE FROM notes")
+//    fun deleteAllUsers()
 }
