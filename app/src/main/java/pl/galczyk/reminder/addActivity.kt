@@ -34,7 +34,6 @@ class addActivity : AppCompatActivity() {
         mDbWorkerThread = DbWorkerThread("dbWorkerThread")
         mDbWorkerThread.start()
         mDb = NotesDatabase.getInstance(this)
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -56,13 +55,12 @@ class addActivity : AppCompatActivity() {
         addButton.setOnClickListener{
             var date = Date(c.timeInMillis)
             var time = Time(c.timeInMillis)
-            //var  note = Note(nameEditText.text.toString(), descriptionEditText.text.toString(), date, time)
-            val  note = Note(null, nameEditText.text.toString())
+            val  note = Note(null, nameEditText.text.toString(), descriptionEditText.text.toString(), date.toString())
 
             insertNoteDataInDb(note)
 
             val snackbar = Snackbar
-                    .make(this.findViewById(android.R.id.content), note.userName, Snackbar.LENGTH_LONG)
+                    .make(this.findViewById(android.R.id.content), note.title + " " +note.description, Snackbar.LENGTH_LONG)
 
             snackbar.show()
         }

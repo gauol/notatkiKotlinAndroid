@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity()  {
         })
 
         getButton.setOnClickListener({
-            getNotesFromDB()
+            deleteAllNotes()
         })
     }
 
@@ -48,12 +48,22 @@ class MainActivity : AppCompatActivity()  {
                 if (notes == null || notes.isEmpty()) {
                     Snackbar.make(this.findViewById(android.R.id.content), "no data", Snackbar.LENGTH_LONG).show()
                 } else {
-                    var value =""
+                    var value = ""
                     for (note in notes){
-                        value += note.userName + "\r\n"
+                        value += note.title + " " + note.description + "\r\n"
                     }
                     notesTextView.text = value
                 }
+            })
+        }
+        mDbWorkerThread.postTask(task)
+    }
+
+    private fun deleteAllNotes(){
+        val task = Runnable {
+            mDb?.noteDao()?.getAll()
+            mUiHandler.post({
+                notesTextView.text = ""
             })
         }
         mDbWorkerThread.postTask(task)
