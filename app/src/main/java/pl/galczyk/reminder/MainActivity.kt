@@ -1,12 +1,15 @@
 package pl.galczyk.reminder
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -34,7 +37,13 @@ class MainActivity : AppCompatActivity()  {
         })
 
         getButton.setOnClickListener({
-            deleteAllNotes()
+            AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Czy na pewno?")
+                    .setMessage("Czy na pewno chcesz usunąć wszystkie notatki?")
+                    .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which -> deleteAllNotes() })
+                    .setNegativeButton("No", null)
+                    .show()
         })
     }
 

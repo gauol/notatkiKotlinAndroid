@@ -11,15 +11,10 @@ import java.sql.Time
 import java.util.*
 import android.support.design.widget.Snackbar
 
-
-
-
 class addActivity : AppCompatActivity() {
     val c = Calendar.getInstance()!!
     private var mDb: NotesDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

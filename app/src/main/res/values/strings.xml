@@ -6,4 +6,5 @@
     <string name="description">Opis</string>
     <string name="date">Data</string>
     <string name="time">Czas</string>
+    <string name="title">Tytuł</string>
 </resources>

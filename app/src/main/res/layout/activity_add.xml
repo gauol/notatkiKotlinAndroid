@@ -10,22 +10,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title"
+            android:textAlignment="center"
+            android:textSize="25sp"
+            android:labelFor="@id/nameEditText"/>
         <EditText
             android:id="@+id/nameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name"
+            android:hint="@string/title"
             android:inputType="text"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/description"
             android:textAlignment="center"
-            android:textSize="25dp"/>
+            android:textSize="25sp"
+            android:labelFor="@id/descriptionEditText"/>
         <EditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textMultiLine"/>
         <Button
