@@ -5,7 +5,7 @@ import android.arch.persistence.room.*
 @Dao
 interface NoteDao {
     @Query("SELECT * FROM notes")
-    fun getAll() : List<Note>
+    fun getAll() : MutableList<Note>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(note: Note)
@@ -14,5 +14,5 @@ interface NoteDao {
     fun deleteNote(note: Note)
 
     @Query("DELETE FROM notes")
-    fun deleteAllUsers()
+    fun deleteAllNotes()
 }

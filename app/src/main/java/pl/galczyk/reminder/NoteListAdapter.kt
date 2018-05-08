@@ -1,21 +1,21 @@
 package pl.galczyk.reminder
 
-import android.content.Context
-import android.content.Intent
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.item_note.view.*
+import android.content.DialogInterface
+import android.support.v7.appcompat.R.styleable.AlertDialog
 
-class NoteListAdapter : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
+
+
+class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
     private var listOfNote: MutableList<Note> = mutableListOf()
-    private var context: Context? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
-        context = parent.context
         return ViewHolder(v)
     }
 
@@ -25,18 +25,22 @@ class NoteListAdapter : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val note = listOfNote[position]
-        holder.noteNameTextView.text = note.title
+        holder.noteTitleTextView.text = note.title
+        holder.noteDescriptionTextView.text = note.description
+        if(position%2 ==1)
+            holder.noteLayout.setBackgroundColor(Color.MAGENTA)
+        else
+            holder.noteLayout.setBackgroundColor(Color.YELLOW)
         holder.noteLayout.setOnClickListener({
-            context?.startActivity(Intent(context, noteDetailsActivity::class.java)
-                    .putExtra("note", note))
-        })
-        setupSwipeDelete(holder.noteItemSwipeLayout)
-        setupBottomViewClick(holder.bottomWrapperLayout, note)
-    }
-
-    private fun setupBottomViewClick(bottomWrapperLayout: FrameLayout?, note: note) {
-        bottomWrapperLayout?.setOnClickListener({
-            deletenoteFromList(note)
+//            context?.startActivity(Intent(context, mainActivity::class.java)
+//                    .putExtra("note", note))
+            AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Closing Activity")
+                    .setMessage("Are you sure you want to close this activity?")
+                    .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which -> finish() })
+                    .setNegativeButton("No", null)
+                    .show()
         })
     }
 
@@ -48,6 +52,7 @@ class NoteListAdapter : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val noteTitleTextView = view.itemNameTextView
         val noteDescriptionTextView = view.itemDescriptionTextView
+        val noteLayout = view.noteLauout
     }
 
     fun setListOfnote(listOfnote: MutableList<Note>) {

@@ -6,7 +6,7 @@ import android.os.Handler
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -14,6 +14,9 @@ class MainActivity : AppCompatActivity()  {
     private var mDb: NotesDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
     private val mUiHandler = Handler()
+
+    private var notesList: MutableList<Note> = mutableListOf()
+    private var noteAdapter: NoteListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +38,26 @@ class MainActivity : AppCompatActivity()  {
         })
     }
 
+    private fun setupNoteAdapter(){
+        noteAdapter = NoteListAdapter(this)
+        noteListRecyclerView.layoutManager = LinearLayoutManager(this)
+        noteListRecyclerView.adapter = noteAdapter
+        noteAdapter?.setListOfnote(notesList)
+    }
+
     override fun onResume() {
-        Log.d("info", "resume")
         super.onResume()
         getNotesFromDB()
     }
 
     private fun getNotesFromDB() {
         val task = Runnable {
-            val notes = mDb?.noteDao()?.getAll()
+            notesList = mDb?.noteDao()?.getAll()!!
             mUiHandler.post({
-                if (notes == null || notes.isEmpty()) {
+                if (notesList.isEmpty()) {
                     Snackbar.make(this.findViewById(android.R.id.content), "no data", Snackbar.LENGTH_LONG).show()
-                } else {
-                    var value = ""
-                    for (note in notes){
-                        value += note.title + " " + note.description + "\r\n"
-                    }
-                    notesTextView.text = value
                 }
+                setupNoteAdapter()
             })
         }
         mDbWorkerThread.postTask(task)
@@ -61,9 +65,9 @@ class MainActivity : AppCompatActivity()  {
 
     private fun deleteAllNotes(){
         val task = Runnable {
-            mDb?.noteDao()?.getAll()
+            mDb?.noteDao()?.deleteAllNotes()
             mUiHandler.post({
-                notesTextView.text = ""
+
             })
         }
         mDbWorkerThread.postTask(task)
@@ -72,6 +76,5 @@ class MainActivity : AppCompatActivity()  {
     override fun onDestroy() {
         super.onDestroy()
         mDbWorkerThread.quit()
-        Log.d("info", "quit!")
     }
 }
