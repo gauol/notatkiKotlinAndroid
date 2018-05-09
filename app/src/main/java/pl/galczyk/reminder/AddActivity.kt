@@ -26,7 +26,7 @@ class AddActivity : AppCompatActivity() {
     var time: Time = Time(c.timeInMillis)
 
     @SuppressLint("SimpleDateFormat")
-    val timeFormat = SimpleDateFormat("HH:MM")
+    val timeFormat = SimpleDateFormat("HH:mm")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class AddActivity : AppCompatActivity() {
 
         timePicker.setOnClickListener {
             val tpd = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                c.set(Calendar.HOUR, hour)
+                c.set(Calendar.HOUR_OF_DAY, hour)
                 c.set(Calendar.MINUTE, minute)
                 time = Time(c.timeInMillis)
                 timePicker.text = timeFormat.format(time)

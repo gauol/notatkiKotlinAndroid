@@ -4,7 +4,7 @@ import android.arch.persistence.room.*
 
 @Dao
 interface NoteDao {
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes ORDER BY date")
     fun getAll() : MutableList<Note>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

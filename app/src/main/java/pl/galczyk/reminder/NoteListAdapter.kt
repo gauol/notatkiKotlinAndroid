@@ -14,7 +14,7 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
     private var listOfNote: MutableList<Note> = mutableListOf()
 
     @SuppressLint("SimpleDateFormat")
-    val dateFormat = SimpleDateFormat("dd-mm-yyyy hh:MM")
+    val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
@@ -31,10 +31,10 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
         holder.noteDescriptionTextView.text = note.description
         val date = note.date
         holder.noteDateTextView.text = dateFormat.format(date)
-        if (position % 2 == 1)
-            holder.noteLayout.setBackgroundColor(Color.MAGENTA)
-        else
-            holder.noteLayout.setBackgroundColor(Color.YELLOW)
+        if (position % 2 == 0)
+            holder.noteLayout.setBackgroundColor(Color.LTGRAY)
+//        else
+//            holder.noteLayout.setBackgroundColor(Color.YELLOW)
 
         holder.noteLayout.setOnClickListener({
             AlertDialog.Builder(mainActivity)
