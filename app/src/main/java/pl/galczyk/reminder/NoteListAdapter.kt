@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_note.view.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
     private var listOfNote: MutableList<Note> = mutableListOf()
@@ -29,13 +31,14 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
         val note = listOfNote[position]
         holder.noteTitleTextView.text = note.title
         holder.noteDescriptionTextView.text = note.description
-        val date = note.date
-        holder.noteDateTextView.text = dateFormat.format(date)
+        holder.noteDateTextView.text = dateFormat.format(note.date)
         if (position % 2 == 0)
             holder.noteLayout.setBackgroundColor(Color.LTGRAY)
 //        else
 //            holder.noteLayout.setBackgroundColor(Color.YELLOW)
-
+        if (note.date - Calendar.getInstance().timeInMillis in 0..86400000)
+            holder.noteLayout.setBackgroundColor(Color.RED)
+        Log.d("infoData", (Calendar.getInstance().timeInMillis - note.date).toString())
         holder.noteLayout.setOnClickListener({
             AlertDialog.Builder(mainActivity)
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -44,7 +47,7 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
                     .setPositiveButton("Tak", { dialog, which ->
                         mainActivity.deleteNote(note)
                         deletenoteFromList(note)
-                    }) //TODO: dodac usuwane z bazy danych
+                    })
                     .setNegativeButton("Nie", null)
                     .show()
         })

@@ -63,18 +63,20 @@ class MainActivity : AppCompatActivity()  {
     }
 
     private fun getNotesFromDB() {
-        val task = Runnable {
-            notesList = mDb?.noteDao()?.getAll()!!
-            mUiHandler.post({
-                if (notesList.isEmpty()) {
-                    schowSnackbarMessage("Brak notatek")
-                }else{
-
+            val task = Runnable {
+                try{
+                    notesList = mDb?.noteDao()?.getAll()!!
+                    mUiHandler.post({
+                        if (notesList.isEmpty()) {
+                            schowSnackbarMessage("Brak notatek")
+                        }
+                        setupNoteAdapter()
+                    })
+                }catch (e: Exception ){
+                    schowSnackbarMessage("Wystąpił błąd odczytu notatek");
                 }
-                setupNoteAdapter()
-            })
-        }
-        mDbWorkerThread.postTask(task)
+            }
+            mDbWorkerThread.postTask(task)
     }
 
     private fun deleteAllNotes(){

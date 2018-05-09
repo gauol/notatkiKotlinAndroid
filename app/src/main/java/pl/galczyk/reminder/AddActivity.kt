@@ -13,6 +13,8 @@ import android.support.design.widget.Snackbar
 import java.text.SimpleDateFormat
 
 class AddActivity : AppCompatActivity() {
+    var locale = Locale.ENGLISH
+    var timeZone = TimeZone.getTimeZone("UTC")
     private val c = Calendar.getInstance()
     private var mDb: NotesDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
