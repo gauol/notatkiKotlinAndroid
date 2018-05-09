@@ -16,4 +16,10 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="12sp"/>
+    <TextView
+        android:id="@+id/itemDateTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="14sp"/>
 </LinearLayout>

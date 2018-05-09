@@ -10,50 +10,61 @@ import java.sql.Date
 import java.sql.Time
 import java.util.*
 import android.support.design.widget.Snackbar
+import java.text.SimpleDateFormat
 
-class addActivity : AppCompatActivity() {
-    val c = Calendar.getInstance()!!
+class AddActivity : AppCompatActivity() {
+    private val c = Calendar.getInstance()
     private var mDb: NotesDatabase? = null
     private lateinit var mDbWorkerThread: DbWorkerThread
+
+    var year = c.get(Calendar.YEAR)
+    var month = c.get(Calendar.MONTH)
+    var day = c.get(Calendar.DAY_OF_MONTH)
+    var hour = c.get(Calendar.HOUR)
+    var minute = c.get(Calendar.MINUTE)
+    var date: Date = Date(c.timeInMillis)
+    var time: Time = Time(c.timeInMillis)
+
+    @SuppressLint("SimpleDateFormat")
+    val timeFormat = SimpleDateFormat("HH:MM")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add)
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
-        val hour = c.get(Calendar.HOUR)
-        val minute = c.get(Calendar.MINUTE)
-        setListeners(year, month, day, hour, minute)
+        setListeners()
 
         mDbWorkerThread = DbWorkerThread("dbWorkerThread")
         mDbWorkerThread.start()
         mDb = NotesDatabase.getInstance(this)
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun setListeners(year: Int, month: Int, day: Int, hour: Int, minute: Int) {
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
+    private fun setListeners() {
+        val listener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            c.set(Calendar.YEAR, year)
+            c.set(Calendar.MONTH, monthOfYear)
+            c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            date = Date(c.timeInMillis)
+            datePicker.text = date.toString()
+        }
         datePicker.setOnClickListener {
-            val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                datePicker.text = "$dayOfMonth.$monthOfYear.$year"
-            }, year, month, day)
+            val dpd = DatePickerDialog(this, listener, year, month, day)
             dpd.show()
         }
 
         timePicker.setOnClickListener {
             val tpd = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-                timePicker.text = "$hour:$minute"
+                c.set(Calendar.HOUR, hour)
+                c.set(Calendar.MINUTE, minute)
+                time = Time(c.timeInMillis)
+                timePicker.text = timeFormat.format(time)
             }, hour, minute, true)
             tpd.show()
         }
 
         addButton.setOnClickListener{
-            var date = Date(c.timeInMillis)
-            var time = Time(c.timeInMillis)
-            val  note = Note(null, nameEditText.text.toString(), descriptionEditText.text.toString(), date.toString())
-
+            val  note = Note(null, nameEditText.text.toString(), descriptionEditText.text.toString(), c.timeInMillis)
             insertNoteDataInDb(note)
-
             val snackbar = Snackbar
                     .make(this.findViewById(android.R.id.content), note.title + " " +note.description, Snackbar.LENGTH_LONG)
 
@@ -64,6 +75,7 @@ class addActivity : AppCompatActivity() {
     private fun insertNoteDataInDb(note: Note) {
         val task = Runnable { mDb?.noteDao()?.insert(note) }
         mDbWorkerThread.postTask(task)
+        finish()
     }
 
     override fun onDestroy() {

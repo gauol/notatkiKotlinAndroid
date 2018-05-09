@@ -1,6 +1,6 @@
 package pl.galczyk.reminder
 
-import android.content.DialogInterface
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
@@ -8,10 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_note.view.*
-
+import java.text.SimpleDateFormat
 
 class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
     private var listOfNote: MutableList<Note> = mutableListOf()
+
+    @SuppressLint("SimpleDateFormat")
+    val dateFormat = SimpleDateFormat("dd-mm-yyyy hh:MM")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
@@ -26,6 +29,8 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
         val note = listOfNote[position]
         holder.noteTitleTextView.text = note.title
         holder.noteDescriptionTextView.text = note.description
+        val date = note.date
+        holder.noteDateTextView.text = dateFormat.format(date)
         if (position % 2 == 1)
             holder.noteLayout.setBackgroundColor(Color.MAGENTA)
         else
@@ -36,7 +41,10 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("Usuwanie")
                     .setMessage("Czy na pewno chcesz usunąć notatkę?")
-                    .setPositiveButton("Tak", { dialog, which -> deletenoteFromList(note) }) //TODO: dodac usuwane z bazy danych
+                    .setPositiveButton("Tak", { dialog, which ->
+                        mainActivity.deleteNote(note)
+                        deletenoteFromList(note)
+                    }) //TODO: dodac usuwane z bazy danych
                     .setNegativeButton("Nie", null)
                     .show()
         })
@@ -50,6 +58,7 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val noteTitleTextView = view.itemNameTextView
         val noteDescriptionTextView = view.itemDescriptionTextView
+        val noteDateTextView = view.itemDateTextView
         val noteLayout = view.noteLauout
     }
 
@@ -58,8 +67,8 @@ class NoteListAdapter(var mainActivity: MainActivity) : RecyclerView.Adapter<Not
         notifyDataSetChanged()
     }
 
-    fun addnote(note: Note) {
-        this.listOfNote.add(note)
+    fun deleteAllNotes() {
+        this.listOfNote.clear()
         notifyDataSetChanged()
     }
 }

@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity()  {
         mDb = NotesDatabase.getInstance(this)
 
         addButton.setOnClickListener({
-            val intent = Intent(this, addActivity::class.java).apply {
+            val intent = Intent(this, AddActivity::class.java).apply {
                 putExtra(EXTRA_MESSAGE, "siemano")
             }
             startActivity(intent)
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity()  {
             notesList = mDb?.noteDao()?.getAll()!!
             mUiHandler.post({
                 if (notesList.isEmpty()) {
-                    Snackbar.make(this.findViewById(android.R.id.content), "no data", Snackbar.LENGTH_LONG).show()
+                    schowSnackbarMessage("Brak notatek")
                 }
                 setupNoteAdapter()
             })
@@ -76,7 +75,18 @@ class MainActivity : AppCompatActivity()  {
         val task = Runnable {
             mDb?.noteDao()?.deleteAllNotes()
             mUiHandler.post({
+                noteAdapter?.deleteAllNotes()
+                schowSnackbarMessage("Usunięto wszystkie notatki")
+            })
+        }
+        mDbWorkerThread.postTask(task)
+    }
 
+    fun deleteNote(note: Note){
+        val task = Runnable {
+            mDb?.noteDao()?.deleteNote(note)
+            mUiHandler.post({
+                schowSnackbarMessage("Usunięto wiadomość")
             })
         }
         mDbWorkerThread.postTask(task)
@@ -85,5 +95,9 @@ class MainActivity : AppCompatActivity()  {
     override fun onDestroy() {
         super.onDestroy()
         mDbWorkerThread.quit()
+    }
+
+    fun schowSnackbarMessage(message: String){
+        Snackbar.make(this.findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show()
     }
 }
